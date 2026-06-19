@@ -7,6 +7,7 @@ package connectcampaignsv2
 
 import (
 	"context"
+	"unique"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/connectcampaignsv2"
@@ -24,7 +25,17 @@ func (p *servicePackage) FrameworkDataSources(ctx context.Context) []*inttypes.S
 }
 
 func (p *servicePackage) FrameworkResources(ctx context.Context) []*inttypes.ServicePackageFrameworkResource {
-	return []*inttypes.ServicePackageFrameworkResource{}
+	return []*inttypes.ServicePackageFrameworkResource{
+		{
+			Factory:  newCampaignResource,
+			TypeName: "aws_connectcampaignsv2_campaign",
+			Name:     "Campaign",
+			Tags: unique.Make(inttypes.ServicePackageResourceTags{
+				IdentifierAttribute: names.AttrARN,
+			}),
+			Region: inttypes.ResourceRegionDefault(),
+		},
+	}
 }
 
 func (p *servicePackage) SDKDataSources(ctx context.Context) []*inttypes.ServicePackageSDKDataSource {
